@@ -112,11 +112,12 @@ classdef SimportFileMDF < SimportFile
                     tmpdatas=mdfread(obj.MDFstructure,cg_unq(i),[1;subchnum]);% time channel at #1
                 else
                     tmptimetbl = obj.MDFFileObj.read(cg_unq(i), ch_local_tbl(subidx,3));
-                    tmptmpdata = table2array(tmptimetbl);
-                    tmpdatas = cell(1,size(tmptmpdata,2)+1);
                     tmpdatas{1} = seconds(tmptimetbl.Time);
-                    for nc = 1:size(tmptmpdata,2)
-                        tmpdatas{nc+1}=tmptmpdata(:,nc);
+                    [~,m]=size(tmptimetbl);
+                    for nc = 1:m
+                        tmpdataname=tmptimetbl.Properties.VariableNames{nc};
+                        evalc(['tmptmpdata','=tmptimetbl.',tmpdataname]);
+                        tmpdatas{nc+1}=tmptmpdata;                        
                     end
                 end
                 if numel(tmpdatas)==1 %if empty
